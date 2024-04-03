@@ -1,16 +1,14 @@
 package com.arthurfaraujo.passin.services;
 
 import java.text.Normalizer;
-import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.arthurfaraujo.passin.domain.attendee.Attendee;
 import com.arthurfaraujo.passin.domain.event.Event;
+import com.arthurfaraujo.passin.domain.event.exceptions.EventNotFoundException;
 import com.arthurfaraujo.passin.dto.event.EventIdDTO;
 import com.arthurfaraujo.passin.dto.event.EventRequestDTO;
 import com.arthurfaraujo.passin.dto.event.EventResponseDTO;
-import com.arthurfaraujo.passin.repositories.AttendeeRepository;
 import com.arthurfaraujo.passin.repositories.EventRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class EventService {
 
   private final EventRepository eventRepository;
-  private final AttendeeRepository attendeeRepository;
+  private final AttendeeService attendeeService;
 
   private String genSlug(String title) {
     String normalizedTitle = Normalizer.normalize(title, Normalizer.Form.NFD);
@@ -33,10 +31,10 @@ public class EventService {
 
   public EventResponseDTO getEventDetail(String eventId) {
     Event event = this.eventRepository.findById(eventId)
-        .orElseThrow(() -> new RuntimeException("Event not found with ID: " + eventId));
-    List<Attendee> attendeeList = this.attendeeRepository.findByEventId(eventId);
+        .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
+    Integer attendeeAmount = this.attendeeService.getAttendeeAmountByEvent(eventId);
 
-    return new EventResponseDTO(event, attendeeList.size());
+    return new EventResponseDTO(event, attendeeAmount);
   }
 
   public EventIdDTO createEvent(EventRequestDTO event) {

@@ -27,7 +27,7 @@ public class EventController {
   private final AttendeeService attendeeService;
 
   @GetMapping("/{id}")
-  public ResponseEntity<EventResponseDTO> getEvent(@PathVariable String id) {
+  public ResponseEntity<EventResponseDTO> getEventById(@PathVariable String id) {
     EventResponseDTO event = this.eventService.getEventDetail(id);
 
     return ResponseEntity.ok(event);

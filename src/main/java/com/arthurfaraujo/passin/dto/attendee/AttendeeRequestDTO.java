@@ -1,7 +1,12 @@
 package com.arthurfaraujo.passin.dto.attendee;
 
-import com.arthurfaraujo.passin.domain.event.Event;
+import lombok.Getter;
+import lombok.Setter;
 
-public record AttendeeRequestDTO(String name, String email, Event event) {
-
+@Getter
+@Setter
+public class AttendeeRequestDTO {
+  private String name;
+  private String email;
+  public String eventId;
 }

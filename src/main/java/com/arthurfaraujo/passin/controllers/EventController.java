@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.arthurfaraujo.passin.dto.attendee.AttendeeIdDTO;
 import com.arthurfaraujo.passin.dto.attendee.AttendeeListResponseDTO;
+import com.arthurfaraujo.passin.dto.attendee.AttendeeRequestDTO;
 import com.arthurfaraujo.passin.dto.event.EventIdDTO;
 import com.arthurfaraujo.passin.dto.event.EventRequestDTO;
 import com.arthurfaraujo.passin.dto.event.EventResponseDTO;
@@ -39,14 +41,26 @@ public class EventController {
 
     return ResponseEntity.ok(attendeeList);
   }
-  
-  
+
   @PostMapping
-  public ResponseEntity<EventIdDTO> createEvent(@RequestBody EventRequestDTO body, UriComponentsBuilder uriComponentsBuilder) {
+  public ResponseEntity<EventIdDTO> createEvent(@RequestBody EventRequestDTO body,
+      UriComponentsBuilder uriComponentsBuilder) {
     EventIdDTO eventIdDTO = this.eventService.createEvent(body);
 
     var uri = uriComponentsBuilder.path("/events/{id}").buildAndExpand(eventIdDTO.eventId()).toUri();
-    
+
     return ResponseEntity.created(uri).body(eventIdDTO);
+  }
+
+  @PostMapping(path = "{id}/attendees")
+  public ResponseEntity<AttendeeIdDTO> addAttendeeToEvent(@RequestBody AttendeeRequestDTO body,
+      @PathVariable String id, UriComponentsBuilder uriComponentsBuilder) {
+    
+    body.setEventId(id);
+    AttendeeIdDTO attendeeIdDTO = this.attendeeService.addAttendee(body);
+
+    var uri = uriComponentsBuilder.path("/attendees/{id}").buildAndExpand(attendeeIdDTO.attendeeId()).toUri();
+
+    return ResponseEntity.created(uri).body(attendeeIdDTO);
   }
 }

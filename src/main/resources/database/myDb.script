@@ -29,7 +29,7 @@ SET FILES NIO TRUE
 SET FILES NIO SIZE 256
 SET FILES LOG TRUE
 SET FILES LOG SIZE 50
-SET FILES CHECK 23266
+SET FILES CHECK 24074
 SET DATABASE COLLATION "SQL_TEXT" PAD SPACE
 CREATE USER SA PASSWORD DIGEST 'd41d8cd98f00b204e9800998ecf8427e'
 ALTER USER SA SET LOCAL TRUE
@@ -58,6 +58,11 @@ INSERT INTO "flyway_schema_history" VALUES(1,'1','create-table-event','SQL','V1_
 INSERT INTO "flyway_schema_history" VALUES(2,'2','create-table-attendee','SQL','V2__create-table-attendee.sql',-1371097768,'SA','2024-04-02 13:15:40.420289',3,'1')
 INSERT INTO "flyway_schema_history" VALUES(3,'3','create-table-checkin','SQL','V3__create-table-checkin.sql',-257067671,'SA','2024-04-02 13:15:40.436836',2,'1')
 INSERT INTO "flyway_schema_history" VALUES(4,'4','create-indexes','SQL','V4__create-indexes.sql',1696777780,'SA','2024-04-02 13:15:40.465026',6,'1')
+INSERT INTO EVENT VALUES('4999cd15-90f5-474b-9a97-43931c7e6d49','Mano fsdf bom hahahahahahah 123132','esse evento vai ser o brabo tlg nao tem jeito','mano-fsdf-bom-hahahahahahah-123132',24)
 INSERT INTO EVENT VALUES('64c35ca5-f81b-487b-b396-6df0bdde910a','whatumean','ahoy','whatumean',12)
 INSERT INTO EVENT VALUES('ad12330f-16ee-49cb-9634-04413fe6ac50','aaaaaaaaaaaaaaa merda','ahoy','aaaaaaaaaaaaaaa-merda',12)
+INSERT INTO EVENT VALUES('bfb5bb84-8e79-4d47-9d81-fdc0edbe605e','Mano que bom hahahahahahah 123132','esse evento vai ser o brabo tlg nao tem jeito','mano-que-bom-hahahahahahah-123132',24)
 INSERT INTO EVENT VALUES('cd5f5326-389c-4c28-ae2e-ec266d41f1f4','Mano que t\u00edtulo bom hahahahahahah 123132','esse evento vai ser o brabo tlg nao tem jeito','mano-que-titulo-bom-hahahahahahah-123132',24)
+INSERT INTO ATTENDEE VALUES('33192e79-eaac-4d86-8b3b-b113f1f98ed0','fdsjalf','flsdjgl\u00e7dgsd','4999cd15-90f5-474b-9a97-43931c7e6d49',NULL)
+INSERT INTO ATTENDEE VALUES('35b34e15-b139-4132-a7e2-6bc6b56b5a75','fdsjalf','glajg\u00e7dfgj\u00e7dsfglsdfkjg\u00e7d','4999cd15-90f5-474b-9a97-43931c7e6d49','2024-04-04 16:52:28.821950')
+INSERT INTO ATTENDEE VALUES('a5d55733-55c6-4962-99e3-64e5ac6f7384','fdsjalf','vsdv','4999cd15-90f5-474b-9a97-43931c7e6d49','2024-04-04 16:52:33.574710')

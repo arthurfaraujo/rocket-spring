@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.arthurfaraujo.passin.domain.attendee.Attendee;
 import com.arthurfaraujo.passin.domain.event.Event;
+import com.arthurfaraujo.passin.dto.attendee.AttendeeBadgeResponseDTO;
 import com.arthurfaraujo.passin.dto.attendee.AttendeeDetailDTO;
 import com.arthurfaraujo.passin.dto.attendee.AttendeeIdDTO;
 import com.arthurfaraujo.passin.dto.attendee.AttendeeListResponseDTO;
@@ -58,7 +60,7 @@ public class AttendeeService {
     newAttendee.setEmail(attendee.getEmail());
     newAttendee.setEvent(event);
     newAttendee.setCreatedAt(LocalDateTime.now());
-    
+
     this.attendeeRepository.save(newAttendee);
 
     return new AttendeeIdDTO(newAttendee.getId());
@@ -70,7 +72,7 @@ public class AttendeeService {
     if (attendee.isPresent())
       throw new AttendeeAlreadyExistException("Attendee not found with id: " + attendee.get().getId());
   }
-  
+
   public void checkInAttendee(String attendeeId) {
     Attendee attendee = getAttendee(attendeeId);
 
@@ -78,6 +80,15 @@ public class AttendeeService {
   }
 
   private Attendee getAttendee(String attendeeId) {
-    return this.attendeeRepository.findById(attendeeId).orElseThrow(() -> new AttendeeNotFoundException("Attendee don't exist!"));
+    return this.attendeeRepository.findById(attendeeId)
+        .orElseThrow(() -> new AttendeeNotFoundException("Attendee don't exist!"));
+  }
+
+  public AttendeeBadgeResponseDTO getAttendeeBadge(String attendeeId, UriComponentsBuilder uriComponentsBuilder) {
+    Attendee attendee = this.getAttendee(attendeeId);
+
+    var uri = uriComponentsBuilder.path("/attendees/{id}/check-in").buildAndExpand(attendeeId).toUri().toString();
+
+    return new AttendeeBadgeResponseDTO(attendee.getName(), attendee.getEmail(), uri, attendee.getEvent().getTitle());
   }
 }

@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import com.arthurfaraujo.passin.dto.attendee.AttendeeBadgeResponseDTO;
 import com.arthurfaraujo.passin.dto.attendee.AttendeeResponseDTO;
 import com.arthurfaraujo.passin.services.AttendeeService;
 
@@ -31,5 +33,12 @@ public class AttendeeController {
     this.service.checkInAttendee(id);
 
     return ResponseEntity.ok().build();
+  }
+
+  @GetMapping(path = "/{id}/badge")
+  public ResponseEntity<AttendeeBadgeResponseDTO> getAttendeeBadge(@PathVariable String id, UriComponentsBuilder uriComponentsBuilder) {
+    AttendeeBadgeResponseDTO badge = this.service.getAttendeeBadge(id, uriComponentsBuilder);
+
+    return ResponseEntity.ok(badge);
   }
 }

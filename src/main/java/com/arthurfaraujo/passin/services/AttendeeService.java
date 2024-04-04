@@ -7,17 +7,15 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.arthurfaraujo.passin.domain.attendee.Attendee;
-import com.arthurfaraujo.passin.domain.checkin.CheckIn;
 import com.arthurfaraujo.passin.domain.event.Event;
-import com.arthurfaraujo.passin.domain.event.exceptions.EventNotFoundException;
 import com.arthurfaraujo.passin.dto.attendee.AttendeeDetailDTO;
 import com.arthurfaraujo.passin.dto.attendee.AttendeeIdDTO;
 import com.arthurfaraujo.passin.dto.attendee.AttendeeListResponseDTO;
 import com.arthurfaraujo.passin.dto.attendee.AttendeeRequestDTO;
 import com.arthurfaraujo.passin.dto.attendee.AttendeeResponseDTO;
+import com.arthurfaraujo.passin.dto.attendee.exceptions.AttendeeAlreadyExistException;
+import com.arthurfaraujo.passin.dto.attendee.exceptions.AttendeeNotFoundException;
 import com.arthurfaraujo.passin.repositories.AttendeeRepository;
-import com.arthurfaraujo.passin.repositories.CheckInRepository;
-import com.arthurfaraujo.passin.repositories.EventRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,14 +24,13 @@ import lombok.RequiredArgsConstructor;
 public class AttendeeService {
 
   private final AttendeeRepository attendeeRepository;
-  private final CheckInRepository checkInRepository;
-  private final EventRepository eventRepository;
+  private final CheckInService checkInService;
 
   public AttendeeResponseDTO getAttendeeById(String attendeeId) {
     Attendee attendee = this.attendeeRepository.findById(attendeeId)
         .orElseThrow(() -> new RuntimeException("Attendee not found with id: " + attendeeId));
 
-    LocalDateTime checkedInAt = getCheckedInAt(attendeeId);
+    LocalDateTime checkedInAt = this.checkInService.getCheckedInAt(attendeeId);
 
     return new AttendeeResponseDTO(attendee, checkedInAt);
   }
@@ -46,7 +43,7 @@ public class AttendeeService {
     List<Attendee> attendeesList = this.attendeeRepository.findByEventId(eventId);
 
     List<AttendeeDetailDTO> attendeeDetailList = attendeesList.stream().map(attendee -> {
-      LocalDateTime checkedInAt = getCheckedInAt(attendee.getId());
+      LocalDateTime checkedInAt = this.checkInService.getCheckedInAt(attendee.getId());
 
       return new AttendeeDetailDTO(attendee.getId(), attendee.getName(), attendee.getEmail(), attendee.getCreatedAt(),
           checkedInAt);
@@ -55,25 +52,32 @@ public class AttendeeService {
     return new AttendeeListResponseDTO(attendeeDetailList);
   }
 
-  public AttendeeIdDTO addAttendee(AttendeeRequestDTO attendee) {
+  public AttendeeIdDTO addAttendee(AttendeeRequestDTO attendee, Event event) {
     Attendee newAttendee = new Attendee();
-    Event event = this.eventRepository.findById(attendee.getEventId())
-        .orElseThrow(() -> new EventNotFoundException("Event not found with id: " + attendee.getEventId()));
-
     newAttendee.setName(attendee.getName());
     newAttendee.setEmail(attendee.getEmail());
     newAttendee.setEvent(event);
-    newAttendee.setCreatedAt(LocalDateTime.now() );
-
-    // puxar o evento antes com esse id e aí passar pro setter
-
+    newAttendee.setCreatedAt(LocalDateTime.now());
+    
     this.attendeeRepository.save(newAttendee);
 
     return new AttendeeIdDTO(newAttendee.getId());
   }
 
-  private LocalDateTime getCheckedInAt(String attendeeId) {
-    Optional<CheckIn> checkIn = this.checkInRepository.findByAttendeeId(attendeeId);
-    return checkIn.isPresent() ? checkIn.get().getCreatedAt() : null;
+  public void verifyAttendeeExist(String email) {
+    Optional<Attendee> attendee = this.attendeeRepository.findByEmail(email);
+
+    if (attendee.isPresent())
+      throw new AttendeeAlreadyExistException("Attendee not found with id: " + attendee.get().getId());
+  }
+  
+  public void checkInAttendee(String attendeeId) {
+    Attendee attendee = getAttendee(attendeeId);
+
+    this.checkInService.createCheckIn(attendee);
+  }
+
+  private Attendee getAttendee(String attendeeId) {
+    return this.attendeeRepository.findById(attendeeId).orElseThrow(() -> new AttendeeNotFoundException("Attendee don't exist!"));
   }
 }

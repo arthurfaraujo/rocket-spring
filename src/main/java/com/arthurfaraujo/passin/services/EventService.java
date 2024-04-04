@@ -5,7 +5,10 @@ import java.text.Normalizer;
 import org.springframework.stereotype.Service;
 
 import com.arthurfaraujo.passin.domain.event.Event;
+import com.arthurfaraujo.passin.domain.event.exceptions.EventFullException;
 import com.arthurfaraujo.passin.domain.event.exceptions.EventNotFoundException;
+import com.arthurfaraujo.passin.dto.attendee.AttendeeIdDTO;
+import com.arthurfaraujo.passin.dto.attendee.AttendeeRequestDTO;
 import com.arthurfaraujo.passin.dto.event.EventIdDTO;
 import com.arthurfaraujo.passin.dto.event.EventRequestDTO;
 import com.arthurfaraujo.passin.dto.event.EventResponseDTO;
@@ -31,10 +34,15 @@ public class EventService {
 
   public EventResponseDTO getEventDetail(String eventId) {
     Event event = this.eventRepository.findById(eventId)
-        .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
+        .orElseThrow(() -> new EventNotFoundException("Event not found with Id: " + eventId));
     Integer attendeeAmount = this.attendeeService.getAttendeeAmountByEvent(eventId);
 
     return new EventResponseDTO(event, attendeeAmount);
+  }
+
+  private Event getEvent(String eventId) {
+    return this.eventRepository.findById(eventId)
+        .orElseThrow(() -> new EventNotFoundException("Event not found with Id: " + eventId));
   }
 
   public EventIdDTO createEvent(EventRequestDTO event) {
@@ -47,5 +55,16 @@ public class EventService {
     this.eventRepository.save(newEvent);
 
     return new EventIdDTO(newEvent.getId());
+  }
+
+  public AttendeeIdDTO addAttendeeToEvent(AttendeeRequestDTO attendee) {
+    this.attendeeService.verifyAttendeeExist(attendee.getEmail());
+    Event event = this.getEvent(attendee.getEventId());
+    Integer eventAttendees = this.attendeeService.getAttendeeAmountByEvent(event.getId());
+
+    if (eventAttendees >= event.getMaxAttendees()) throw new EventFullException("Event is full");
+
+    AttendeeIdDTO attendeeId = this.attendeeService.addAttendee(attendee, event);
+    return new AttendeeIdDTO(attendeeId.attendeeId());
   }
 }

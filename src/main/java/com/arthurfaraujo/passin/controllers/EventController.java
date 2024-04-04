@@ -57,7 +57,7 @@ public class EventController {
       @PathVariable String id, UriComponentsBuilder uriComponentsBuilder) {
     
     body.setEventId(id);
-    AttendeeIdDTO attendeeIdDTO = this.attendeeService.addAttendee(body);
+    AttendeeIdDTO attendeeIdDTO = this.eventService.addAttendeeToEvent(body);
 
     var uri = uriComponentsBuilder.path("/attendees/{id}").buildAndExpand(attendeeIdDTO.attendeeId()).toUri();
 

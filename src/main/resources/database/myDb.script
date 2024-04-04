@@ -29,7 +29,7 @@ SET FILES NIO TRUE
 SET FILES NIO SIZE 256
 SET FILES LOG TRUE
 SET FILES LOG SIZE 50
-SET FILES CHECK 1042
+SET FILES CHECK 23266
 SET DATABASE COLLATION "SQL_TEXT" PAD SPACE
 CREATE USER SA PASSWORD DIGEST 'd41d8cd98f00b204e9800998ecf8427e'
 ALTER USER SA SET LOCAL TRUE
@@ -58,3 +58,6 @@ INSERT INTO "flyway_schema_history" VALUES(1,'1','create-table-event','SQL','V1_
 INSERT INTO "flyway_schema_history" VALUES(2,'2','create-table-attendee','SQL','V2__create-table-attendee.sql',-1371097768,'SA','2024-04-02 13:15:40.420289',3,'1')
 INSERT INTO "flyway_schema_history" VALUES(3,'3','create-table-checkin','SQL','V3__create-table-checkin.sql',-257067671,'SA','2024-04-02 13:15:40.436836',2,'1')
 INSERT INTO "flyway_schema_history" VALUES(4,'4','create-indexes','SQL','V4__create-indexes.sql',1696777780,'SA','2024-04-02 13:15:40.465026',6,'1')
+INSERT INTO EVENT VALUES('64c35ca5-f81b-487b-b396-6df0bdde910a','whatumean','ahoy','whatumean',12)
+INSERT INTO EVENT VALUES('ad12330f-16ee-49cb-9634-04413fe6ac50','aaaaaaaaaaaaaaa merda','ahoy','aaaaaaaaaaaaaaa-merda',12)
+INSERT INTO EVENT VALUES('cd5f5326-389c-4c28-ae2e-ec266d41f1f4','Mano que t\u00edtulo bom hahahahahahah 123132','esse evento vai ser o brabo tlg nao tem jeito','mano-que-titulo-bom-hahahahahahah-123132',24)
